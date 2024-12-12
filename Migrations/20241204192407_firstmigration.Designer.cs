@@ -12,8 +12,8 @@ using prj_RestaurantApi.Dao;
 namespace prj_RestaurantApi.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20241203180110_firstmig")]
-    partial class firstmig
+    [Migration("20241204192407_firstmigration")]
+    partial class firstmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,13 +39,13 @@ namespace prj_RestaurantApi.Migrations
                     b.Property<DateTime>("dateCommande")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("employeIdId")
+                    b.Property<int>("employeId")
                         .HasColumnType("int");
 
                     b.Property<int>("jours")
                         .HasColumnType("int");
 
-                    b.Property<int>("platIdId")
+                    b.Property<int>("platId")
                         .HasColumnType("int");
 
                     b.Property<double>("prix")
@@ -59,11 +59,11 @@ namespace prj_RestaurantApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("employeIdId");
+                    b.HasIndex("employeId");
 
-                    b.HasIndex("platIdId");
+                    b.HasIndex("platId");
 
-                    b.ToTable("Commande");
+                    b.ToTable("Commandes");
                 });
 
             modelBuilder.Entity("prj_RestaurantApi.Models.Employe", b =>
@@ -128,21 +128,21 @@ namespace prj_RestaurantApi.Migrations
 
             modelBuilder.Entity("prj_RestaurantApi.Models.Commande", b =>
                 {
-                    b.HasOne("prj_RestaurantApi.Models.Employe", "employeId")
+                    b.HasOne("prj_RestaurantApi.Models.Employe", "employe")
                         .WithMany("Commandes")
-                        .HasForeignKey("employeIdId")
+                        .HasForeignKey("employeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("prj_RestaurantApi.Models.Plat", "platId")
+                    b.HasOne("prj_RestaurantApi.Models.Plat", "plat")
                         .WithMany("Commandes")
-                        .HasForeignKey("platIdId")
+                        .HasForeignKey("platId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("employeId");
+                    b.Navigation("employe");
 
-                    b.Navigation("platId");
+                    b.Navigation("plat");
                 });
 
             modelBuilder.Entity("prj_RestaurantApi.Models.Employe", b =>

@@ -1,77 +1,81 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using prj_RestaurantApi.Dto;
 using prj_RestaurantApi.IServices;
-using prj_RestaurantApi.Models;
+using System.Collections.Generic;
 
 namespace prj_RestaurantApi.Controllers
 {
-    [Route("Plats")]
+    [Route("api/Plats")]
     [ApiController]
     public class PlatController : ControllerBase
     {
-        public readonly PlatService _platservice;
-        public PlatController(PlatService platservice)
+        private readonly PlatService _platService;
+
+        public PlatController(PlatService platService)
         {
-            _platservice = platservice;   
-        }
-        [HttpGet]
-        public ActionResult<IEnumerable<Plat>> GetPlats()
-        {
-            return Ok(_platservice);
+            _platService = platService;
         }
 
-       
-        [HttpGet("{nom}")]
-        public ActionResult<Plat> GetPlatById(string nom)
+        [HttpGet]
+        public ActionResult<IEnumerable<PlatDto>> GetPlats()
         {
-            var plat = _platservice.ChercherPlatByNom(nom);
+            var plats = _platService.ListPlats();
+            if (plats == null || plats.Count == 0)
+            {
+                return NotFound("Aucun plat trouvé.");
+            }
+            return Ok(plats);
+        }
+
+        [HttpGet("{nom}")]
+        public ActionResult<PlatDto> GetPlatByNom(string nom)
+        {
+            var plat = _platService.ChercherPlatByNom(nom);
             if (plat == null)
             {
-                return NotFound($"Plat avec l'ID {nom} non trouvé.");
+                return NotFound($"Plat avec le nom '{nom}' non trouvé.");
             }
             return Ok(plat);
         }
 
-   
         [HttpPost]
-        public ActionResult<Plat> CreatePlat(Plat newPlat)
+        public ActionResult<PlatDto> CreatePlat([FromBody] PlatDto newPlatDto)
         {
-           
-            if (newPlat == null)
+            if (newPlatDto == null)
             {
                 return BadRequest("Les données du plat sont invalides.");
             }
 
-            Plat plat = _platservice.AJouterPlat(newPlat);
-            if (plat == null) 
+            var newPlat = _platService.AJouterPlat(newPlatDto);
+            if (newPlat == null)
             {
-                return Conflict("Deja Existe");
+                return Conflict("Le plat existe déjà.");
             }
 
-            return CreatedAtAction(nameof(GetPlatById), new { id = newPlat.Id }, newPlat);
+            return CreatedAtAction(nameof(GetPlatByNom), new { nom = newPlat.nom }, newPlat);
         }
 
         [HttpPut("{id}")]
-        public ActionResult UpdatePlat(int id, Plat updatedPlat)
+        public ActionResult UpdatePlat(int id, [FromBody] PlatDto updatedPlatDto)
         {
-    
-            if (id != updatedPlat.Id)
+            if (updatedPlatDto == null || id != updatedPlatDto.Id)
             {
-                return BadRequest($"Plat avec l'ID {id} non trouvé.");
+                return BadRequest("Les données du plat sont invalides.");
             }
 
-            Plat plat = _platservice.ModifierPlat(id, updatedPlat);
-            if (plat == null)
+            var updatedPlat = _platService.ModifierPlat(id, updatedPlatDto);
+            if (updatedPlat == null)
             {
                 return NotFound($"Plat avec l'ID {id} non trouvé.");
             }
-       
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public ActionResult DeletePlat(int id)
         {
-            var plat = _platservice.DeletePlat(id);
+            var plat = _platService.DeletePlat(id);
             if (plat == null)
             {
                 return NotFound($"Plat avec l'ID {id} non trouvé.");

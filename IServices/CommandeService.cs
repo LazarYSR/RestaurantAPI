@@ -1,13 +1,14 @@
-﻿using prj_RestaurantApi.Models;
+﻿using prj_RestaurantApi.Dto;
+using prj_RestaurantApi.Models;
 
 namespace prj_RestaurantApi.IServices
 {
     public interface CommandeService
     {
-        Commande AjouterCommande(Commande commande);
-        Commande ModifierCommande(int id, Commande commande);
-        Commande ChercherCommandeParId(int id);
-        List<Commande> ListerCommandes();
-        Commande SupprimerCommande(int id);
+        CommandeDto AjouterCommande(CommandeDto commande);
+        CommandeDto ModifierCommande(int id, CommandeDto commande);
+        CommandeDto ChercherCommandeParId(int id);
+        List<CommandeDto> ListerCommandes();
+        CommandeDto SupprimerCommande(int id);
     }
 }

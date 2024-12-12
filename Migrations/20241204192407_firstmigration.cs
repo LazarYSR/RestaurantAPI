@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace prj_RestaurantApi.Migrations
 {
-    public partial class firstmig : Migration
+    public partial class firstmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -43,7 +43,7 @@ namespace prj_RestaurantApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Commande",
+                name: "Commandes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -54,41 +54,41 @@ namespace prj_RestaurantApi.Migrations
                     quantite = table.Column<int>(type: "int", nullable: false),
                     dateCommande = table.Column<DateTime>(type: "datetime2", nullable: false),
                     total = table.Column<double>(type: "float", nullable: false),
-                    employeIdId = table.Column<int>(type: "int", nullable: false),
-                    platIdId = table.Column<int>(type: "int", nullable: false)
+                    employeId = table.Column<int>(type: "int", nullable: false),
+                    platId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Commande", x => x.Id);
+                    table.PrimaryKey("PK_Commandes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Commande_Employes_employeIdId",
-                        column: x => x.employeIdId,
+                        name: "FK_Commandes_Employes_employeId",
+                        column: x => x.employeId,
                         principalTable: "Employes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Commande_Plats_platIdId",
-                        column: x => x.platIdId,
+                        name: "FK_Commandes_Plats_platId",
+                        column: x => x.platId,
                         principalTable: "Plats",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Commande_employeIdId",
-                table: "Commande",
-                column: "employeIdId");
+                name: "IX_Commandes_employeId",
+                table: "Commandes",
+                column: "employeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Commande_platIdId",
-                table: "Commande",
-                column: "platIdId");
+                name: "IX_Commandes_platId",
+                table: "Commandes",
+                column: "platId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Commande");
+                name: "Commandes");
 
             migrationBuilder.DropTable(
                 name: "Employes");

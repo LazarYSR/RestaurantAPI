@@ -1,77 +1,151 @@
 ﻿using prj_RestaurantApi.Dao;
+using prj_RestaurantApi.Dto;
 using prj_RestaurantApi.IServices;
 using prj_RestaurantApi.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace prj_RestaurantApi.Repo
 {
     public class PlatRepo : PlatService
     {
         private readonly MyContext _db;
-        public PlatRepo(MyContext db) 
+
+        public PlatRepo(MyContext db)
         {
             _db = db;
-        }   
-        public Plat AJouterPlat(Plat p)
-        {
-            Plat plat = _db.Plats.FirstOrDefault(pl => pl.Id == p.Id );
-            if (plat ==null)
-            {
-                return null;
-            }
-            _db.Plats.Add(plat);
-            _db.SaveChanges();
-            return plat;  
         }
 
-        public Plat ChercherPlatByNom(string nom)
+        public PlatDto AJouterPlat(PlatDto platDto)
         {
-            Plat pl = _db.Plats.FirstOrDefault(p => p.nom ==nom);
-            if (pl ==null)
-            { 
-                return null;  
-            }
-            
-            return pl ;
-        }
-
-        public Plat DeletePlat(int Id)
-        {
-            Plat pl = _db.Plats.FirstOrDefault(p => p.Id == Id);
-            if (pl == null)
+            // Vérification de l'existence du plat par son nom ou ID si nécessaire
+            var plat = _db.Plats.FirstOrDefault(pl => pl.nom == platDto.nom);
+            if (plat != null)
             {
+                // Si le plat existe déjà, retourner null ou gérer selon la logique métier
                 return null;
             }
-            _db.Plats.Remove(pl);
+
+            // Conversion du DTO en entité
+            var newPlat = new Plat
+            {
+                nom = platDto.nom,
+                categorie = platDto.categorie,
+                prix = platDto.prix,
+                jours = platDto.jours,
+                ingredients = platDto.ingredients,
+                tempspreparation = platDto.tempspreparation
+            };
+
+            _db.Plats.Add(newPlat);
             _db.SaveChanges();
 
-            return pl;
+            // Conversion de l'entité en DTO
+            return new PlatDto
+            {
+                Id = newPlat.Id,
+                nom = newPlat.nom,
+                categorie = newPlat.categorie,
+                prix = newPlat.prix,
+                jours = newPlat.jours,
+                ingredients = newPlat.ingredients,
+                tempspreparation = newPlat.tempspreparation
+            };
         }
 
-        public List<Plat> ListPlats()
+        public PlatDto ChercherPlatByNom(string nom)
         {
-            if (!_db.Plats.ToList().Any())
+            var plat = _db.Plats.FirstOrDefault(p => p.nom == nom);
+            if (plat == null)
             {
                 return null;
             }
-            return _db.Plats.ToList();
+
+            // Conversion de l'entité en DTO
+            return new PlatDto
+            {
+                Id = plat.Id,
+                nom = plat.nom,
+                categorie = plat.categorie,
+                prix = plat.prix,
+                jours = plat.jours,
+                ingredients = plat.ingredients,
+                tempspreparation = plat.tempspreparation
+            };
         }
 
-        public Plat ModifierPlat(int Id,Plat plat)
+        public PlatDto DeletePlat(int Id)
         {
-            Plat pl = _db.Plats.FirstOrDefault(p => p.Id == Id);
-            if (pl == null)
+            var plat = _db.Plats.FirstOrDefault(p => p.Id == Id);
+            if (plat == null)
             {
                 return null;
             }
-            pl.nom= plat.nom;
-            pl.prix = plat.prix;
-            pl.tempspreparation = plat.tempspreparation;    
-            pl.categorie = plat.categorie;  
-            pl.ingredients = plat.ingredients;  
-            pl.nom = plat.nom;
+
+            _db.Plats.Remove(plat);
             _db.SaveChanges();
 
-            return pl;
+            // Conversion de l'entité supprimée en DTO
+            return new PlatDto
+            {
+                Id = plat.Id,
+                nom = plat.nom,
+                categorie = plat.categorie,
+                prix = plat.prix,
+                jours = plat.jours,
+                ingredients = plat.ingredients,
+                tempspreparation = plat.tempspreparation
+            };
+        }
+
+        public List<PlatDto> ListPlats()
+        {
+            var plats = _db.Plats.ToList();
+            if (!plats.Any())
+            {
+                return null;
+            }
+
+            return plats.Select(p => new PlatDto
+            {
+                Id = p.Id,
+                nom = p.nom,
+                categorie = p.categorie,
+                prix = p.prix,
+                jours = p.jours,
+                ingredients = p.ingredients,
+                tempspreparation = p.tempspreparation
+            }).ToList();
+        }
+
+        public PlatDto ModifierPlat(int Id, PlatDto platDto)
+        {
+            var plat = _db.Plats.FirstOrDefault(p => p.Id == Id);
+            if (plat == null)
+            {
+                return null;
+            }
+
+            // Mise à jour des propriétés
+            plat.nom = platDto.nom;
+            plat.prix = platDto.prix;
+            plat.tempspreparation = platDto.tempspreparation;
+            plat.categorie = platDto.categorie;
+            plat.ingredients = platDto.ingredients;
+
+            _db.SaveChanges();
+
+            // Conversion de l'entité mise à jour en DTO
+            return new PlatDto
+            {
+                Id = plat.Id,
+                nom = plat.nom,
+                categorie = plat.categorie,
+                prix = plat.prix,
+                jours = plat.jours,
+                ingredients = plat.ingredients,
+                tempspreparation = plat.tempspreparation
+            };
         }
     }
 }

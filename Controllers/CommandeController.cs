@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using prj_RestaurantApi.Dto;
 using prj_RestaurantApi.IServices;
 using prj_RestaurantApi.Models;
+using System.Collections.Generic;
 
 namespace prj_RestaurantApi.Controllers
 {
-    [Route("Commandes")]
+    [Route("api/Commandes")]
     [ApiController]
     public class CommandeController : ControllerBase
     {
@@ -17,7 +18,7 @@ namespace prj_RestaurantApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllCommandes()
+        public ActionResult<IEnumerable<Commande>> GetAllCommandes()
         {
             var commandes = _commandeService.ListerCommandes();
             if (commandes == null || commandes.Count == 0)
@@ -28,7 +29,7 @@ namespace prj_RestaurantApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCommandeById(int id)
+        public ActionResult<Commande> GetCommandeById(int id)
         {
             var commande = _commandeService.ChercherCommandeParId(id);
             if (commande == null)
@@ -39,15 +40,25 @@ namespace prj_RestaurantApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCommande([FromBody] Commande commande)
+        public ActionResult<Commande> AddCommande(CommandeDto commande)
         {
+            if (commande == null)
+            {
+                return BadRequest("Les informations de la commande sont invalides.");
+            }
+
             var newCommande = _commandeService.AjouterCommande(commande);
             return CreatedAtAction(nameof(GetCommandeById), new { id = newCommande.Id }, newCommande);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateCommande(int id, [FromBody] Commande commande)
+        public ActionResult<Commande> UpdateCommande(int id, CommandeDto commande)
         {
+            if (commande == null)
+            {
+                return BadRequest("Les informations de la commande sont invalides.");
+            }
+
             var updatedCommande = _commandeService.ModifierCommande(id, commande);
             if (updatedCommande == null)
             {
@@ -59,12 +70,12 @@ namespace prj_RestaurantApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteCommande(int id)
         {
-            Commande isDeleted = _commandeService.SupprimerCommande(id);
-            if (isDeleted==null)
+            var isDeleted = _commandeService.SupprimerCommande(id);
+            if (isDeleted == null)
             {
                 return NotFound($"Commande avec l'ID {id} introuvable.");
             }
-            return Ok($"Commande avec l'ID {id} supprimée.");
+            return NoContent(); // Utiliser NoContent pour indiquer la suppression réussie
         }
     }
 }
