@@ -18,15 +18,15 @@ namespace prj_RestaurantApi.Repo
 
         public PlatDto AJouterPlat(PlatDto platDto)
         {
-            // Vérification de l'existence du plat par son nom ou ID si nécessaire
+            
             var plat = _db.Plats.FirstOrDefault(pl => pl.nom == platDto.nom);
             if (plat != null)
             {
-                // Si le plat existe déjà, retourner null ou gérer selon la logique métier
+              
                 return null;
             }
 
-            // Conversion du DTO en entité
+           
             var newPlat = new Plat
             {
                 nom = platDto.nom,
@@ -40,7 +40,7 @@ namespace prj_RestaurantApi.Repo
             _db.Plats.Add(newPlat);
             _db.SaveChanges();
 
-            // Conversion de l'entité en DTO
+           
             return new PlatDto
             {
                 Id = newPlat.Id,
@@ -53,15 +53,15 @@ namespace prj_RestaurantApi.Repo
             };
         }
 
-        public PlatDto ChercherPlatByNom(string nom)
+        public PlatDto ChercherPlatById(int id)
         {
-            var plat = _db.Plats.FirstOrDefault(p => p.nom == nom);
+            var plat = _db.Plats.FirstOrDefault(p => p.Id == id);
             if (plat == null)
             {
                 return null;
             }
 
-            // Conversion de l'entité en DTO
+           
             return new PlatDto
             {
                 Id = plat.Id,
@@ -85,7 +85,7 @@ namespace prj_RestaurantApi.Repo
             _db.Plats.Remove(plat);
             _db.SaveChanges();
 
-            // Conversion de l'entité supprimée en DTO
+            
             return new PlatDto
             {
                 Id = plat.Id,
@@ -126,7 +126,7 @@ namespace prj_RestaurantApi.Repo
                 return null;
             }
 
-            // Mise à jour des propriétés
+     
             plat.nom = platDto.nom;
             plat.prix = platDto.prix;
             plat.tempspreparation = platDto.tempspreparation;
@@ -135,7 +135,7 @@ namespace prj_RestaurantApi.Repo
 
             _db.SaveChanges();
 
-            // Conversion de l'entité mise à jour en DTO
+           
             return new PlatDto
             {
                 Id = plat.Id,

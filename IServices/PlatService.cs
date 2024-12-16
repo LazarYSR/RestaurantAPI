@@ -8,7 +8,7 @@ namespace prj_RestaurantApi.IServices
         PlatDto AJouterPlat(PlatDto plat);
         PlatDto DeletePlat(int Id);
         PlatDto ModifierPlat(int Id,PlatDto plat);
-        PlatDto ChercherPlatByNom(string nom);
+        PlatDto ChercherPlatById(int id);
         List<PlatDto> ListPlats();
     }
 }

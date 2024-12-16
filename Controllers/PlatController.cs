@@ -27,13 +27,13 @@ namespace prj_RestaurantApi.Controllers
             return Ok(plats);
         }
 
-        [HttpGet("{nom}")]
-        public ActionResult<PlatDto> GetPlatByNom(string nom)
+        [HttpGet("{id}")]
+        public ActionResult<PlatDto> GetPlatById(int id)
         {
-            var plat = _platService.ChercherPlatByNom(nom);
+            var plat = _platService.ChercherPlatById(id);
             if (plat == null)
             {
-                return NotFound($"Plat avec le nom '{nom}' non trouvé.");
+                return NotFound($"Plat avec le nom '{id}' non trouvé.");
             }
             return Ok(plat);
         }
@@ -52,7 +52,7 @@ namespace prj_RestaurantApi.Controllers
                 return Conflict("Le plat existe déjà.");
             }
 
-            return CreatedAtAction(nameof(GetPlatByNom), new { nom = newPlat.nom }, newPlat);
+            return CreatedAtAction(nameof(GetPlatById), new { nom = newPlat.nom }, newPlat);
         }
 
         [HttpPut("{id}")]
